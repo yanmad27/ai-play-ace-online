@@ -1,0 +1,34 @@
+name: Build Windows
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install -r requirements.txt pyinstaller==6.11.1
+      - name: Test learning and Win32 adapter
+        shell: pwsh
+        run: |
+          $env:PYTHONPATH = 'src'
+          python -m unittest discover -s tests -v
+          python run.py --self-test
+          python -c "from ace_pilot.windows import Desktop; d=Desktop(); assert d.foreground(); d.release()"
+      - name: Package
+        run: python -m PyInstaller --noconfirm --clean --onedir --name AcePilot --paths src --collect-all sklearn --collect-all mss --hidden-import tkinter run.py
+      - name: Test packaged executable
+        run: dist/AcePilot/AcePilot.exe --self-test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AcePilot-Windows-x64
+          path: dist/AcePilot/
+          retention-days: 14
