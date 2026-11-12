@@ -10,6 +10,7 @@ class Desktop:
         self.user = ctypes.WinDLL('user32', use_last_error=True)
         self.user.GetForegroundWindow.restype = wintypes.HWND
         self.user.IsWindow.argtypes = [wintypes.HWND]
+        self.user.IsIconic.argtypes = [wintypes.HWND]
         self.user.GetWindowTextW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
         self.user.GetClientRect.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.RECT)]
         self.user.ClientToScreen.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.POINT)]

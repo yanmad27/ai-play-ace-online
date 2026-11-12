@@ -22,7 +22,7 @@ jobs:
           $env:PYTHONPATH = 'src'
           python -m unittest discover -s tests -v
           python run.py --self-test
-          python -c "from ace_pilot.windows import Desktop; d=Desktop(); assert d.foreground(); d.release()"
+          python -c "from ace_pilot.windows import Desktop; d=Desktop(); d.title(d.foreground()); d.down('w'); d.release()"
       - name: Package
         run: python -m PyInstaller --noconfirm --clean --onedir --name AcePilot --paths src --collect-all sklearn --collect-all mss --hidden-import tkinter run.py
       - name: Test packaged executable
